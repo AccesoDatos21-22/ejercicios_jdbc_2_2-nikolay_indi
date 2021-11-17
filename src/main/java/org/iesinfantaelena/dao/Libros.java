@@ -149,31 +149,6 @@ public class Libros {
     }
 
     /**
-     * Actualizo el número de copias de un libro
-     * @param copias
-     */
-    public void actualizarCopias(HashMap<Integer, Integer> copias) throws AccesoDatosException{
-        pStmt = null;
-        rs = null;
-
-        try{
-            ArrayList<Libro> lista = (ArrayList<Libro>) verCatalogo();
-
-            for(int i = 0; i < lista.size(); i++){
-                if(copias.containsKey(lista.get(i).getISBN())){
-                    pStmt = con.prepareStatement(UPDATE_LIBRO_QUERY);
-                    pStmt.setInt(1, copias.get(lista.get(i).getISBN()));
-                }
-            }
-        } catch (SQLException sqle) {
-            Utilidades.printSQLException(sqle);
-        } finally {
-            liberar();
-        }
-    }
-
-
-    /**
      * Añade un nuevo libro a la BD
      */
     public void anadirLibro(Libro libro) throws AccesoDatosException {
@@ -297,6 +272,12 @@ public class Libros {
         }
     }
 
+
+    /**
+     * Para este método utilizo los tipos indicados de ResultSet para poder recorrelo deade la última posición
+     * a la primera
+     * @throws AccesoDatosException
+     */
     public void verCatalogoInverso() throws AccesoDatosException{
         try {
             stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -317,7 +298,33 @@ public class Libros {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            liberar();
         }
 
+    }
+
+    /**
+     * He renombrado el método debido a que esta clase tenía uno con el mismo nombre
+     * @param copias
+     */
+
+    public void actualizarCopias(HashMap<Integer, Integer> copias){
+        try{
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
+
+            while (rs.next()){
+                if(copias.containsKey(rs.getInt("isbn"))){
+                    int total = rs.getInt("copias") + copias.get(rs.getInt("isbn"));
+                    rs.updateInt("copias", total);
+                    rs.updateRow();
+                }
+            }
+        } catch(SQLException sqle){
+            Utilidades.printSQLException(sqle);
+        } finally {
+            liberar();
+        }
     }
 }

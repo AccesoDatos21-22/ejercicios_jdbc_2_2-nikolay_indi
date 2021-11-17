@@ -85,11 +85,12 @@ public class Main {
             HashMap<Integer, Integer> listaActu = new HashMap<Integer, Integer>();
 
             System.out.println("Actualizo con HashMap");
-            listaActu.put(1245, 1);
+            listaActu.put(12453, 1);
             listaActu.put(1325, 1);
             listaActu.put(1725, 1);
 
             libros.actualizarCopias(listaActu);
+            
             System.out.println();
 
             System.out.println("Catálogo de libros disponibles");
