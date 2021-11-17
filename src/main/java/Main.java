@@ -3,6 +3,7 @@ import org.iesinfantaelena.dao.Libros;
 import org.iesinfantaelena.modelo.AccesoDatosException;
 import org.iesinfantaelena.modelo.Libro;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Main {
@@ -81,12 +82,26 @@ public class Main {
 
             System.out.println();
 
+            HashMap<Integer, Integer> listaActu = new HashMap<Integer, Integer>();
+
+            System.out.println("Actualizo con HashMap");
+            listaActu.put(1245, 1);
+            listaActu.put(1325, 1);
+            listaActu.put(1725, 1);
+
+            libros.actualizarCopias(listaActu);
+            System.out.println();
+
             System.out.println("Catálogo de libros disponibles");
             leerLista(libros.verCatalogo());
+
+            System.out.println();
+
+            System.out.println("Catálogo de libros disponibles inverso");
+            libros.verCatalogoInverso();
 
         } catch (AccesoDatosException e) {
             e.printStackTrace();
         }
     }
-
 }

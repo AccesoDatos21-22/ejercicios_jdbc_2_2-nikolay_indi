@@ -1,13 +1,14 @@
 package org.iesinfantaelena.dao;
 
+import org.iesinfantaelena.modelo.AccesoDatosException;
+import org.iesinfantaelena.modelo.Libro;
+import org.iesinfantaelena.utils.Utilidades;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import org.iesinfantaelena.modelo.Libro;
-import org.iesinfantaelena.utils.Utilidades;
-import org.iesinfantaelena.modelo.AccesoDatosException;
 
 
 /**
@@ -131,7 +132,6 @@ public class Libros {
 
     public void actualizarCopias(Libro libro) throws AccesoDatosException {
         pStmt = null;
-        rs = null;
         try {
             pStmt = con.prepareStatement(UPDATE_LIBRO_QUERY);
             pStmt.setInt(1, libro.getCopias());
@@ -143,6 +143,30 @@ public class Libros {
             Utilidades.printSQLException(sqle);
             throw new AccesoDatosException(
                     "Ocurrió un error al acceder a los datos");
+        } finally {
+            liberar();
+        }
+    }
+
+    /**
+     * Actualizo el número de copias de un libro
+     * @param copias
+     */
+    public void actualizarCopias(HashMap<Integer, Integer> copias) throws AccesoDatosException{
+        pStmt = null;
+        rs = null;
+
+        try{
+            ArrayList<Libro> lista = (ArrayList<Libro>) verCatalogo();
+
+            for(int i = 0; i < lista.size(); i++){
+                if(copias.containsKey(lista.get(i).getISBN())){
+                    pStmt = con.prepareStatement(UPDATE_LIBRO_QUERY);
+                    pStmt.setInt(1, copias.get(lista.get(i).getISBN()));
+                }
+            }
+        } catch (SQLException sqle) {
+            Utilidades.printSQLException(sqle);
         } finally {
             liberar();
         }
@@ -271,5 +295,29 @@ public class Libros {
         } finally {
             liberar();
         }
+    }
+
+    public void verCatalogoInverso() throws AccesoDatosException{
+        try {
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
+
+            rs.afterLast();
+
+            while(rs.previous()){
+                int isbn = rs.getInt("ISBN");
+                String titulo = rs.getString("titulo");
+                String autor = rs.getString("autor");
+                String editorial = rs.getString("editorial");
+                int paginas = rs.getInt("paginas");
+                int copias = rs.getInt("copias");
+
+                System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }
