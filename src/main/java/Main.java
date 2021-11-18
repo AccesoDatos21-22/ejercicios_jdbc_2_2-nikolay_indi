@@ -9,21 +9,22 @@ import java.util.List;
 public class Main {
 
     public static void leerLista(List<Libro> lista){
-        for(int i = 0; i < lista.size(); i++){
-            int isbn = lista.get(i).getISBN();
-            String titulo = lista.get(i).getTitulo();
-            String autor = lista.get(i).getAutor();
-            String editorial = lista.get(i).getEditorial();
-            int paginas = lista.get(i).getPaginas();
-            int copias = lista.get(i).getCopias();
+        for (Libro libro : lista) {
+            int isbn = libro.getISBN();
+            String titulo = libro.getTitulo();
+            String autor = libro.getAutor();
+            String editorial = libro.getEditorial();
+            int paginas = libro.getPaginas();
+            int copias = libro.getCopias();
+            double precio = libro.getPrecio();
 
-            System.out.println(isbn + ", " + titulo + ", " + autor + ", " + editorial + ", " + paginas + ", " + copias);
+            System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias + " Precio: " + precio);
         }
     }
 
     public static void leerCampos(String[] campos){
-        for(int i = 0; i < campos.length; i++){
-            System.out.println(campos[i]);
+        for (String campo : campos) {
+            System.out.println(campo);
         }
     }
 
@@ -46,10 +47,10 @@ public class Main {
             libros.crearTablaLibros();
 
             System.out.println("Añado los libros en la base de datos \n");
-            Libro libro_1 = new Libro(12345,"Sistemas Operativos","Tanembaun","Informatica",156,3);
-            Libro libro_2 = new Libro(12453,"Minix","Stallings","Informatica",345,4);
-            Libro libro_3 = new Libro(1325,"Linux","Richard Stallman","FSF",168,10);
-            Libro libro_4 = new Libro(1725,"Java","Juan Garcia","Programacion",245,9);
+            Libro libro_1 = new Libro(12345,"Sistemas Operativos","Tanembaun","Informatica",156,3,0.0);
+            Libro libro_2 = new Libro(12453,"Minix","Stallings","Informatica",345,4,0.0);
+            Libro libro_3 = new Libro(1325,"Linux","Richard Stallman","FSF",168,10,0.0);
+            Libro libro_4 = new Libro(1725,"Java","Juan Garcia","Programacion",245,9,0.0);
 
             libros.anadirLibro(libro_1);
             libros.anadirLibro(libro_2);
@@ -77,12 +78,12 @@ public class Main {
             System.out.println();
 
             System.out.println("Actualizo las copias del libro_2");
-            libro_2 = new Libro(12453,"Minix","Stallings","Informatica",345,10);
+            libro_2 = new Libro(12453,"Minix","Stallings","Informatica",345,10,0.0);
             libros.actualizarCopias(libro_2);
 
             System.out.println();
 
-            HashMap<Integer, Integer> listaActu = new HashMap<Integer, Integer>();
+            HashMap<Integer, Integer> listaActu = new HashMap<>();
 
             System.out.println("Actualizo con HashMap");
             listaActu.put(12453, 1);
