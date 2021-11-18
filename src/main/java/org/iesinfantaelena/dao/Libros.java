@@ -305,7 +305,7 @@ public class Libros {
     }
 
     /**
-     * He renombrado el método debido a que esta clase tenía uno con el mismo nombre
+     * Método para actualizar las copias de los libros
      * @param copias
      */
 
@@ -324,6 +324,36 @@ public class Libros {
         } catch(SQLException sqle){
             Utilidades.printSQLException(sqle);
         } finally {
+            liberar();
+        }
+    }
+
+    /**
+     * Método para mostrar filas pasadas por un array
+     * @param filas
+     * @throws AccesoDatosException
+     */
+    public void verCatalogo(int[] filas) throws AccesoDatosException{
+        try{
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
+
+            for(int i = 0; i < filas.length; i++){
+                if(rs.absolute(filas[i])){
+                    int isbn = rs.getInt("isbn");
+                    String titulo = rs.getString("titulo");
+                    String autor = rs.getString("autor");
+                    String editorial = rs.getString("editorial");
+                    int paginas = rs.getInt("paginas");
+                    int copias = rs.getInt("copias");
+
+                    System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias);
+                }
+            }
+
+        }catch(SQLException sqle){
+            Utilidades.printSQLException(sqle);
+        }finally {
             liberar();
         }
     }

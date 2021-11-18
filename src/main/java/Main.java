@@ -101,6 +101,13 @@ public class Main {
             System.out.println("Catálogo de libros disponibles inverso");
             libros.verCatalogoInverso();
 
+            System.out.println();
+
+            System.out.println("Buscar filas, mediante un array el cual contiene las filas deseadas");
+            int[] filas = {3,2};
+            libros.verCatalogo(filas);
+
+
         } catch (AccesoDatosException e) {
             e.printStackTrace();
         }
