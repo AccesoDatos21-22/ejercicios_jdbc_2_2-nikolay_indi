@@ -359,7 +359,12 @@ public class Libros {
         }
     }
 
-
+    /**
+     * Método para rellenar el campo precio de cada libro en base al precio por página pasado.
+     * He cambiado el tipo de dato recibido de float a double debido a que se adapta mejor a mi programa.
+     * @param precio
+     * @throws AccesoDatosException
+     */
     public void rellenaPrecio(double precio) throws AccesoDatosException{
         try{
             stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
