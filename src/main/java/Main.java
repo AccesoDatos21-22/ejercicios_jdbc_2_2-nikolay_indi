@@ -131,6 +131,13 @@ public class Main {
             System.out.println("Busco un libro y creo uno nuevo con los mismos datos pero con nuevo isbn");
             libros.copiaLibro(1725,1234);
             leerLista(libros.verCatalogo());
+
+            System.out.println();
+
+            System.out.println("Busco un cafe al cual le pongo las ventas a 0 y se las sumo al otro café");
+            cafes.insertar("Cafetazo", 150, 2.0f, 10,100);
+            cafes.transferencia("Cafetito", "Cafetazo");
+            cafes.verTabla();
         } catch (AccesoDatosException e) {
             e.printStackTrace();
         }

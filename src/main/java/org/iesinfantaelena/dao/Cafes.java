@@ -252,4 +252,47 @@ public class Cafes   {
             Utilidades.printSQLException(sqle);
         }
     }
+
+    public void transferencia(String cafe1, String cafe2) throws AccesoDatosException{
+        try {
+            con.setAutoCommit(false);
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery(SELECT_CAFES_QUERY);
+
+            int ventas = 0;
+
+            while(rs.next()){
+                if(rs.getString("CAF_NOMBRE").equals(cafe1)){
+                    ventas = rs.getInt("ventas");
+                }
+            }
+
+            rs.beforeFirst();
+
+            while(rs.next()){
+                if(rs.getString("CAF_NOMBRE").equals(cafe2)){
+                    rs.updateInt("ventas", rs.getInt("ventas")+ventas);
+                    rs.updateRow();
+                }
+            }
+
+            rs.beforeFirst();
+
+            while(rs.next()){
+                if(rs.getString("CAF_NOMBRE").equals(cafe1)){
+                    rs.updateInt("ventas", 0);
+                    rs.updateRow();
+                }
+            }
+
+            con.commit();
+        } catch( SQLException sqle){
+            try {
+                con.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Utilidades.printSQLException(sqle);
+        }
+    }
 }
