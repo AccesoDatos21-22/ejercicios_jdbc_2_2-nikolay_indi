@@ -125,6 +125,12 @@ public class Main {
             System.out.println("Calculo de nuevo el precio de los libros junto al nuevo número de páginas sumadas");
             libros.actualizaPrecioNuevo(1725,0.1,100);
             leerLista(libros.verCatalogo());
+
+            System.out.println();
+
+            System.out.println("Busco un libro y creo uno nuevo con los mismos datos pero con nuevo isbn");
+            libros.copiaLibro(1725,1234);
+            leerLista(libros.verCatalogo());
         } catch (AccesoDatosException e) {
             e.printStackTrace();
         }

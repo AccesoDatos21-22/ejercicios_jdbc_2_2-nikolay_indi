@@ -460,4 +460,44 @@ public class Libros {
             liberar();
         }
     }
+
+    /**
+     * Método para buscar un libro y en base a ese libro crear uno nuevo con los mismos datos pero con el isbn pasado
+     * por parámetros
+     * @param isbn1
+     * @param isbn2
+     * @throws AccesoDatosException
+     */
+    public void copiaLibro(int isbn1, int isbn2) throws AccesoDatosException{
+        try{
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
+
+            while(rs.next()){
+                if(rs.getInt("isbn") == isbn1){
+                    String titulo = rs.getString("titulo");
+                    String autor = rs.getString("autor");
+                    String editorial = rs.getString("editorial");
+                    int paginas = rs.getInt("paginas");
+                    int copias = rs.getInt("copias");
+                    double precio = rs.getDouble("precio");
+
+                    rs.moveToInsertRow();
+                    rs.updateInt("isbn", isbn2);
+                    rs.updateString("titulo", titulo);
+                    rs.updateString("autor", autor);
+                    rs.updateString("editorial", editorial);
+                    rs.updateInt("paginas", paginas);
+                    rs.updateInt("copias", copias);
+                    rs.updateDouble("precio", precio);
+
+                    rs.insertRow();
+                }
+            }
+        } catch (SQLException sqle){
+            Utilidades.printSQLException(sqle);
+        } finally {
+            liberar();
+        }
+    }
 }
