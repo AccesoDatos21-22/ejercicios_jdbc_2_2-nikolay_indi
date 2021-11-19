@@ -182,8 +182,6 @@ public class Libros {
      */
 
     public void borrar(Libro libro) throws AccesoDatosException {
-        pStmt = null;
-
         try {
             pStmt = con.prepareStatement(DELETE_LIBRO_QUERY);
             pStmt.setInt(1, libro.getISBN());
@@ -201,8 +199,6 @@ public class Libros {
     }
 
     public void crearTablaLibros() throws AccesoDatosException {
-        pStmt = null;
-
         try {
             pStmt = con.prepareStatement(CREATE_LIBROS_QUERY);
             pStmt.executeUpdate();
@@ -217,9 +213,6 @@ public class Libros {
     }
 
     public void obtenerLibro(int ISBN) throws AccesoDatosException {
-        pStmt = null;
-        rs = null;
-
         try {
             pStmt = con.prepareStatement(SEARCH_LIBRO_QUERY);
             pStmt.setInt(1, ISBN);
@@ -247,9 +240,6 @@ public class Libros {
     }
 
     public String[] getCamposLibro() throws AccesoDatosException {
-        pStmt = null;
-        rs = null;
-
         ResultSetMetaData rsmd = null;
         String[] campos = null;
 
@@ -376,6 +366,53 @@ public class Libros {
                 rs.updateRow();
             }
         } catch(SQLException sqle){
+            Utilidades.printSQLException(sqle);
+        } finally {
+            liberar();
+        }
+    }
+
+    /**
+     *
+     * He cambiado el tipo de dato recibido (precio) de float a double debido a que se adapta mejor a mi código
+     * @param isbn1
+     * @param isbn2
+     * @param precio
+     * @throws AccesoDatosException
+     */
+    public void actualizaPrecio(int isbn1, int isbn2, double precio) throws AccesoDatosException{
+        try{
+            con.setAutoCommit(false);
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
+
+            double precioMax = 0;
+
+            while (rs.next()){
+                if(rs.getInt("isbn") == isbn1 || rs.getInt("isbn") == isbn2){
+                    double precioTotal = (rs.getInt("paginas") * precio);
+                    if(precioMax < precioTotal){
+                        precioMax = precioTotal;
+                    }
+                }
+            }
+
+            rs.beforeFirst();
+
+            while(rs.next()){
+                if(rs.getInt("isbn") == isbn1 || rs.getInt("isbn") == isbn2){
+                    rs.updateDouble("precio", precioMax);
+                    rs.updateRow();
+                }
+            }
+
+            con.commit();
+        } catch(SQLException sqle){
+            try {
+                con.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             Utilidades.printSQLException(sqle);
         } finally {
             liberar();

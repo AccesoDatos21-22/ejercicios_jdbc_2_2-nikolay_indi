@@ -114,7 +114,11 @@ public class Main {
             libros.rellenaPrecio(0.10);
             leerLista(libros.verCatalogo());
 
+            System.out.println("");
 
+            System.out.println("Actualizo el precio de los libros (mediante el isbn que he pasado) junto al precio por página");
+            libros.actualizaPrecio(1725,1325,0.2);
+            leerLista(libros.verCatalogo());
         } catch (AccesoDatosException e) {
             e.printStackTrace();
         }
