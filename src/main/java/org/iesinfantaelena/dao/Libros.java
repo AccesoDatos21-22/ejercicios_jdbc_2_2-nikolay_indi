@@ -350,7 +350,6 @@ public class Libros {
                     System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias);
                 }
             }
-
         }catch(SQLException sqle){
             Utilidades.printSQLException(sqle);
         }finally {
