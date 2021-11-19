@@ -7,22 +7,39 @@ public class Libro {
     private String editorial ;
     private int paginas ;
     private int copias ;
+    private double precio;
 
+    /**
+     * Constructor por defecto
+     */
     public Libro() {
 
     }
 
-    public Libro(int ISBN,String titulo, String autor, String editorial, int paginas, int copias) {
+    /**
+     * Constructor con precio
+     * @param ISBN
+     * @param titulo
+     * @param autor
+     * @param editorial
+     * @param paginas
+     * @param copias
+     * @param precio
+     */
+    public Libro(int ISBN,String titulo, String autor, String editorial, int paginas, int copias, double precio) {
         this.ISBN = ISBN;
         this.titulo = titulo;
         this.autor = autor;
         this.editorial = editorial;
         this.paginas = paginas;
         this.copias = copias;
+        this.precio = precio;
     }
 
 
-
+    /**
+     *Getters y Setters de la clase
+     */
     public int getISBN() {
         return ISBN;
     }
@@ -71,7 +88,11 @@ public class Libro {
         this.copias = copias;
     }
 
+    public double getPrecio() {
+        return precio;
+    }
 
-
-
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
 }

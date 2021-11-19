@@ -34,8 +34,8 @@ public class Libros {
      * Consultas a realizar en la base de datos
      */
 
-    private static final String CREATE_LIBROS_QUERY = "create table libros (isbn integer not null, titulo varchar(50) not null, autor varchar(50) not null, editorial varchar(25) not null, paginas integer not null, copias integer not null, constraint isbn_pk primary key (isbn));";
-    private static final String INSERT_LIBRERIA_QUERY = "insert into LIBROS values (?,?,?,?,?,?)";
+    private static final String CREATE_LIBROS_QUERY = "create table libros (isbn integer not null, titulo varchar(50) not null, autor varchar(50) not null, editorial varchar(25) not null, paginas integer not null, copias integer not null, precio double not null, constraint isbn_pk primary key (isbn));";
+    private static final String INSERT_LIBRERIA_QUERY = "insert into LIBROS values (?,?,?,?,?,?,?)";
     private static final String SELECT_LIBROS_QUERY = "select * from libros";
     private static final String DELETE_LIBRO_QUERY = "delete from LIBROS WHERE isbn = ?";
     private static final String SEARCH_LIBRO_QUERY = "select * from libros WHERE isbn = ?";
@@ -111,6 +111,7 @@ public class Libros {
                 temporal.setEditorial(rs.getString("editorial"));
                 temporal.setPaginas(rs.getInt("paginas"));
                 temporal.setCopias(rs.getInt("copias"));
+                temporal.setPrecio(rs.getDouble("precio"));
 
                 lista.add(temporal);
             }
@@ -163,6 +164,7 @@ public class Libros {
             pStmt.setString(4, libro.getEditorial());
             pStmt.setInt(5, libro.getPaginas());
             pStmt.setInt(6, libro.getCopias());
+            pStmt.setDouble(7,libro.getPrecio());
 
             pStmt.executeUpdate();
 
@@ -186,8 +188,8 @@ public class Libros {
             pStmt = con.prepareStatement(DELETE_LIBRO_QUERY);
             pStmt.setInt(1, libro.getISBN());
             pStmt.executeUpdate();
-            System.out.println("El libro " + libro.getTitulo() + " ha sido borrado.");
 
+            System.out.println("El libro " + libro.getTitulo() + " ha sido borrado.");
         } catch (SQLException sqle) {
             Utilidades.printSQLException(sqle);
             throw new AccesoDatosException(
@@ -230,8 +232,9 @@ public class Libros {
                 String editorial = rs.getString("editorial");
                 int paginas = rs.getInt("paginas");
                 int copias = rs.getInt("copias");
-                System.out.println(isbn + ", " + titulo + ", "
-                        + autor + ", " + editorial + ", " + paginas + ", " + copias);
+                double precio = rs.getDouble("precio");
+
+                System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias + " Precio: " + precio);
             }
 
         } catch (SQLException sqle) {
@@ -292,10 +295,9 @@ public class Libros {
                 String editorial = rs.getString("editorial");
                 int paginas = rs.getInt("paginas");
                 int copias = rs.getInt("copias");
+                double precio = rs.getDouble("precio");
 
-                System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias);
-            }
-
+                System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias + " Precio: " + precio);            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -346,13 +348,31 @@ public class Libros {
                     String editorial = rs.getString("editorial");
                     int paginas = rs.getInt("paginas");
                     int copias = rs.getInt("copias");
+                    double precio = rs.getDouble("precio");
 
-                    System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias);
-                }
+                    System.out.println("ISBN: " + isbn + " Título: " + titulo + " Autor: " + autor + " Editorial: " + editorial + " Páginas: " + paginas + " Copias: " + copias + " Precio: " + precio);               }
             }
         }catch(SQLException sqle){
             Utilidades.printSQLException(sqle);
         }finally {
+            liberar();
+        }
+    }
+
+
+    public void rellenaPrecio(double precio) throws AccesoDatosException{
+        try{
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
+
+            while (rs.next()){
+                double precioTotal = (rs.getInt("paginas") * precio);
+                rs.updateDouble("precio", precioTotal);
+                rs.updateRow();
+            }
+        } catch(SQLException sqle){
+            Utilidades.printSQLException(sqle);
+        } finally {
             liberar();
         }
     }
