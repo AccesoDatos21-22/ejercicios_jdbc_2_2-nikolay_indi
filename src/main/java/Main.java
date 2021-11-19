@@ -108,6 +108,12 @@ public class Main {
             int[] filas = {3,2};
             libros.verCatalogo(filas);
 
+            System.out.println();
+
+            System.out.println("Actualizo el precio de los libros, pasando el precio por página");
+            libros.rellenaPrecio(0.10);
+            leerLista(libros.verCatalogo());
+
 
         } catch (AccesoDatosException e) {
             e.printStackTrace();

@@ -360,7 +360,20 @@ public class Libros {
     }
 
 
-    public void rellenaPrecio(float precio) throws AccesoDatosException{
+    public void rellenaPrecio(double precio) throws AccesoDatosException{
+        try{
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
 
+            while (rs.next()){
+                double precioTotal = (rs.getInt("paginas") * precio);
+                rs.updateDouble("precio", precioTotal);
+                rs.updateRow();
+            }
+        } catch(SQLException sqle){
+            Utilidades.printSQLException(sqle);
+        } finally {
+            liberar();
+        }
     }
 }
