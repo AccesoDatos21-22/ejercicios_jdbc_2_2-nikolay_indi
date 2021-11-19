@@ -373,7 +373,8 @@ public class Libros {
     }
 
     /**
-     *
+     * En este método actualizo el precio de dos libros en base al precio más alto recibido.
+     * Y en caso de que ocurra algún fallo hago un con.rollBack() para poder volver al estado anterior.
      * He cambiado el tipo de dato recibido (precio) de float a double debido a que se adapta mejor a mi código
      * @param isbn1
      * @param isbn2
@@ -390,7 +391,7 @@ public class Libros {
 
             while (rs.next()){
                 if(rs.getInt("isbn") == isbn1 || rs.getInt("isbn") == isbn2){
-                    double precioTotal = (rs.getInt("paginas") * precio);
+                    double precioTotal = rs.getInt("paginas") * precio;
                     if(precioMax < precioTotal){
                         precioMax = precioTotal;
                     }
@@ -402,6 +403,47 @@ public class Libros {
             while(rs.next()){
                 if(rs.getInt("isbn") == isbn1 || rs.getInt("isbn") == isbn2){
                     rs.updateDouble("precio", precioMax);
+                    rs.updateRow();
+                }
+            }
+
+            con.commit();
+        } catch(SQLException sqle){
+            try {
+                con.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Utilidades.printSQLException(sqle);
+        } finally {
+            liberar();
+        }
+    }
+
+    /**
+     * Le he cambiado el nombre al método debido a que el anterior se llama igual
+     * En este método actualizo al libro pasado por parámetros le sumo las páginas le sumo las páginas
+     * pasadas por parámetro a las que ya tenía y les calculo de nuevo el precio
+     * He cambiado el tipo de dato recibido (precio) de float a double debido a que se adapta mejor a mi código
+     * @param isbn
+     * @param precio
+     * @param paginas
+     * @throws AccesoDatosException
+     */
+    public void actualizaPrecioNuevo(int isbn, double precio,  int paginas) throws AccesoDatosException{
+        try{
+            con.setAutoCommit(false);
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery(SELECT_LIBROS_QUERY);
+
+            while (rs.next()){
+                if(rs.getInt("isbn") == isbn){
+                    int totalPaginas = rs.getInt("paginas") + paginas;
+                    rs.updateInt("paginas", totalPaginas);
+                    rs.updateRow();
+
+                    double nuevoPrecio = rs.getInt("paginas") * precio;
+                    rs.updateDouble("precio", nuevoPrecio);
                     rs.updateRow();
                 }
             }
